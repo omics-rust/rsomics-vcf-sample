@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use std::process::Command;
 
 const N_RECORDS: usize = 100_000;
-const SEED: u64 = 0x00CAFE_0042;
+const SEED: u64 = 0xCAFE_0042_ABCD_0000;
 
 fn xorshift(x: &mut u64) -> u64 {
     *x ^= *x << 13;
