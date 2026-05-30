@@ -90,7 +90,6 @@ fn fraction_pass<R: io::Read>(
         let line = line.map_err(RsomicsError::Io)?;
         let bytes = line.as_bytes();
         if bytes.first() == Some(&b'#') {
-            // Header — always emit.
             out.write_all(bytes).map_err(RsomicsError::Io)?;
             out.write_all(b"\n").map_err(RsomicsError::Io)?;
         } else if !bytes.is_empty() {
@@ -116,7 +115,6 @@ fn exact_pass<R: io::Read>(
     n: usize,
 ) -> Result<SampleStats> {
     let mut header: Vec<Vec<u8>> = Vec::new();
-    // Reservoir: (original_index, line_bytes)
     let mut reservoir: Vec<(usize, Vec<u8>)> = Vec::with_capacity(n);
     let mut total = 0usize;
 
@@ -140,13 +138,11 @@ fn exact_pass<R: io::Read>(
         }
     }
 
-    // Emit header.
     for h in &header {
         out.write_all(h).map_err(RsomicsError::Io)?;
         out.write_all(b"\n").map_err(RsomicsError::Io)?;
     }
 
-    // Sort reservoir by original index so output is in input order.
     reservoir.sort_unstable_by_key(|(i, _)| *i);
     let kept = reservoir.len() as u64;
     for (_, bytes) in reservoir {
